@@ -1,0 +1,17 @@
+<h1>Todo-app</h1>
+<h2>{{ title }}</h2>
+<ul>
+     @for(task of tasks; track task){
+      <li>  {{ task}} </li>
+    }
+    
+</ul>
+<hr>
+<h2>{{ 'hola'.repeat(4) }}</h2>
+<p>la suma de 3 + 3 es: {{ 3 + 3 }}</p>
+<p>'Hola soy {{ name }} y mi edad es  {{ age }} </p>
+<hr>
+<img [src]="person.avatar" alt="">
+<input type="number" [value]="person.age">
+<button [disabled]="disabled">Click me</button>
+<p>person: {{person.name}}</p>
