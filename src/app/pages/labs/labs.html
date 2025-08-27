@@ -2,7 +2,7 @@
 <h1>Todo-app</h1>
 <h2>{{ title }}</h2>
 <ul>
-     @for(task of tasks; track task){
+     @for(task of tasks(); track task){
       <li>  {{ task}} </li>
     }
     
@@ -10,7 +10,7 @@
 <hr>
 <h2>{{ 'hola'.repeat(4) }}</h2>
 <p>la suma de 3 + 3 es: {{ 3 + 3 }}</p>
-<p>'Hola soy {{ name }} y mi edad es  {{ age }} </p>
+<p>'Hola soy {{ name() }} y mi edad es  {{ age }} </p>
 <hr>
 <img [src]="person.avatar" alt="">
 <input type="number" [value]="person.age">
@@ -21,6 +21,19 @@
 <button (dblclick)="clickHandler()">double me</button>
 <p>(Change)</p>
 <input type="number" [value]="person.age" (change)="changeHandler($event)">
+<p>(Change)</p>
+<input type="text" [value]="person.name" (change)="changeHandler($event)">
 <p>(KeyDown)</p>
 <input type="text" [value]="person.name" (keydown)="keydownHandler($event)">
+<hr>
+<ul>
+  <p>total: {{tasks().length}}</p>
+     @for(task of tasks(); track task;){
+      <li> {{$index}} {{ task}} </li>
+    }
+    
+</ul>
+<h1>Signals</h1>
+<input type="text" [value]="name()" (change)="changeHandler($event)">
+<p>name: {{name()}}</p>
 </div>
