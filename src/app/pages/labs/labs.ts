@@ -1,8 +1,10 @@
 import { Component, signal  } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+
 @Component({
   selector: 'app-labs',
-  imports: [CommonModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './labs.html',
   styleUrl: './labs.css'
 })
@@ -18,10 +20,18 @@ age = 14;
 disabled = true;
 img = "https://w3schools.com/howto/img_avatar.png";
 
-person = {
+person = signal({
   name: 'Mia',
   age: 14,
   avatar: 'https://w3schools.com/howto/img_avatar.png'
+})
+
+colorCtrl =new FormControl();
+
+constructor() {
+  this.colorCtrl.valueChanges.subscribe( color => {
+    console.log({ color });
+})
 }
 clickHandler(){
   alert('hola');
@@ -31,6 +41,24 @@ changeHandler(event: Event) {
   const newValue = input.value;
   this.name.set(newValue);
 }
+changeAgeHandler(event: Event) {
+  const input = event.target as HTMLInputElement;
+  const newValue = Number(input.value);
+  this.person.update( person => ({
+    ...person,
+    age: newValue
+  }))
+}
+
+changeNameHandler(event: Event) {
+const input = event.target as HTMLInputElement;
+const newValue = input.value;
+this.person.update( person => ({
+  ...person,
+  name: newValue
+}))
+}
+
 keydownHandler(event: KeyboardEvent) {
   const input = event.target as HTMLInputElement;
   console.log(input.value);
