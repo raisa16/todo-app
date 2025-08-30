@@ -1,14 +1,15 @@
-import { Component, signal } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import { Task } from '../../models/task.model';
 import { JsonPipe } from '@angular/common';
-
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 @Component({
   selector: 'app-home',
-  imports: [  JsonPipe],
+  imports: [  JsonPipe, ReactiveFormsModule],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
 export class Home {
+
 tasks = signal<Task[]>( [
   {
     id: Date.now(),
@@ -26,10 +27,35 @@ tasks = signal<Task[]>( [
     completed: false
   }  
 ]);
-changeHandler(event:Event) {
-  const newValue = event.target as HTMLInputElement;
-  const task = newValue.value;
-  this.addTask(task);
+
+newTaskCtrl = new FormControl('', {
+  nonNullable: true,
+  validators: [
+    Validators.required,
+  ]
+});
+
+filter = signal('all');
+
+taskByFilter = computed(() => {
+  const filter = this.filter();
+  const tasks = this.tasks();
+  if(filter === 'pending'){
+    return tasks.filter( task => !task.completed)
+  }
+  if(filter === 'completed'){
+    return tasks.filter(task => task.completed)
+  }
+  return tasks;
+});
+changeHandler() {
+  if(this.newTaskCtrl.valid){
+    const value = this.newTaskCtrl.value.trim();
+    if(value !== ''){
+      this.addTask(value);
+      this.newTaskCtrl.reset();
+    }
+  }
   
 }
 addTask(task: string){
@@ -56,6 +82,41 @@ updateTask(index: number) {
   })
 })
 }
+updateTaskEditMode(index: number) {
+  this.tasks.update(tasks => {
+    return tasks.map((task,position) => {
+    if(position === index && task.completed === false){
+      return {
+        ...task,
+        editing: !task.editing
+      }
+    }
+    return {
+      ...task,
+      editing: false
+    }
+  })
+})
 }
-
-
+updateTaskText(index:number,event: Event) {
+  const input = event.target as HTMLInputElement
+  const text = input.value.trim();
+  if(text !== '' ){
+    this.tasks.update(tasks => {
+      return tasks.map((task,position) => {
+        if(position === index && task.completed === false){
+          return {
+      ...task,
+      title: text,
+      editing: false
+    }
+}
+return task
+})
+    })
+  }
+}
+changeFilter(newFilter: string) {
+  this.filter.set(newFilter);
+}
+}
